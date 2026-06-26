@@ -23,14 +23,18 @@
   @keyframes dunCue{ 0%{ transform:translateY(0); opacity:.9; } 50%{ transform:translateY(9px); opacity:.35; } 100%{ transform:translateY(0); opacity:.9; } }
   @keyframes dunMarquee{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
   @keyframes dunGlow{ 0%,100%{ opacity:.5; } 50%{ opacity:.85; } }
-  @media (max-width: 768px) {
-    .desktop-nav { display: none !important; }
-    .mobile-menu-btn { display: flex !important; }
+  @media (max-width: 850px) {
+    [data-desktop-nav] { display: none !important; }
+    [data-mobile-btn] { display: flex !important; }
+    [data-build-grid] { grid-template-columns: 1fr !important; gap: 40px !important; text-align: center; }
+    [data-build-img] { height: 45vh !important; min-height: auto !important; }
+    [data-build-text] h2 { font-size: 32px !important; }
   }
-  @media (min-width: 769px) {
-    .mobile-menu-btn { display: none !important; }
-    .mobile-menu-overlay { display: none !important; }
+  @media (min-width: 851px) {
+    [data-mobile-btn] { display: none !important; }
+    [data-mobile-overlay] { display: none !important; }
   }
+
 </style>
 </helmet>
 
@@ -50,7 +54,7 @@
         <div style="font-size:10px; letter-spacing:.3em; color:#a39b88; font-weight:500;">GROUP</div>
       </div>
     </div>
-    <div class="desktop-nav" style="display:flex; align-items:center; gap:clamp(24px,4vw,48px); font-size:13px; font-weight:500; letter-spacing:.08em; text-transform:uppercase;">
+    <div data-desktop-nav style="display:flex; align-items:center; gap:clamp(24px,4vw,48px); font-size:13px; font-weight:500; letter-spacing:.08em; text-transform:uppercase;">
       <div onClick="{{ goHome }}" style="cursor:pointer; position:relative; color:#e9e0cd;" style-hover="color:#c9a24b;">Home<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; left:0; right:0; bottom:-8px; height:2px; background:#c9a24b; border-radius:2px;"></span></sc-if></div>
       <div onClick="{{ goProjects }}" style="cursor:pointer; position:relative; color:#e9e0cd;" style-hover="color:#c9a24b;">Projects<sc-if value="{{ isProjects }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; left:0; right:0; bottom:-8px; height:2px; background:#c9a24b; border-radius:2px;"></span></sc-if></div>
       <div onClick="{{ goAbout }}" style="cursor:pointer; position:relative; color:#e9e0cd;" style-hover="color:#c9a24b;">About<sc-if value="{{ isAbout }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; left:0; right:0; bottom:-8px; height:2px; background:#c9a24b; border-radius:2px;"></span></sc-if></div>
@@ -58,7 +62,7 @@
     </div>
     
     <!-- Mobile Hamburger -->
-    <div class="mobile-menu-btn" onClick="{{ toggleMenu }}" style="cursor:pointer; flex-direction:column; gap:6px; z-index:200;">
+    <div data-mobile-btn onClick="{{ toggleMenu }}" style="cursor:pointer; flex-direction:column; gap:6px; z-index:200;">
       <div style="width:28px; height:2px; background:#c9a24b; transition:all 0.3s ease; transform: {{ menu ? 'translateY(8px) rotate(45deg)' : 'none' }};"></div>
       <div style="width:28px; height:2px; background:#c9a24b; transition:all 0.3s ease; transform: {{ menu ? 'translateY(-8px) rotate(-45deg)' : 'none' }};"></div>
     </div>
@@ -66,7 +70,7 @@
 
   <!-- Mobile Menu Overlay -->
   <sc-if value="{{ menu }}" hint-placeholder-val="{{ false }}">
-    <div class="mobile-menu-overlay" style="position:fixed; inset:0; background:rgba(7,31,31,0.98); backdrop-filter:blur(20px); z-index:150; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:40px; font-family:'Sora',sans-serif; font-size:clamp(28px, 6vw, 42px); font-weight:500; letter-spacing:.1em; text-transform:uppercase; transition:all 0.4s ease;">
+    <div data-mobile-overlay style="position:fixed; inset:0; background:rgba(7,31,31,0.98); backdrop-filter:blur(20px); z-index:150; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:40px; font-family:'Sora',sans-serif; font-size:clamp(28px, 6vw, 42px); font-weight:500; letter-spacing:.1em; text-transform:uppercase; transition:all 0.4s ease;">
       <!-- Close Button -->
       <div onClick="{{ toggleMenu }}" style="position:absolute; top:24px; right:clamp(24px,5vw,80px); width:48px; height:48px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#c9a24b; z-index:160;">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -171,17 +175,17 @@
     <!-- SCROLL-SCRUB BUILD -->
     <section data-scrubwrap data-screen-label="Build" style="position:relative; z-index:5; background:#f0ebd8; color:#1a1c1a;">
       <div style="position:relative; height:100vh; display:flex; align-items:center;">
-        <div style="position:relative; width:100%; max-width:1400px; margin:0 auto; padding:0 clamp(24px,8vw,140px); display:grid; grid-template-columns:1fr 1fr; gap:clamp(40px,8vw,120px); align-items:center;">
-          <div>
+        <div data-build-grid style="position:relative; width:100%; max-width:1400px; margin:0 auto; padding:0 clamp(24px,8vw,140px); display:grid; grid-template-columns:1fr 1fr; gap:clamp(40px,8vw,120px); align-items:center;">
+          <div data-build-text>
             <div style="font-size:12px; font-weight:600; letter-spacing:.3em; text-transform:uppercase; color:#b08a34; margin-bottom:24px;">From Ground to Skyline</div>
             <h2 style="margin:0 0 32px; font-family:'Sora',sans-serif; font-weight:400; font-size:clamp(40px,5vw,70px); line-height:1.05; letter-spacing:-.03em;">We build the way<br>we promise.</h2>
-            <p style="margin:0; max-width:50ch; font-size:clamp(16px,1.6vw,20px); line-height:1.8; color:#4a524a; font-weight:400;">Process-driven execution, quality control at every stage and disciplined timelines — watch a Dunamis structure rise from foundation to finished skyline.</p>
-            <div style="margin-top:60px; display:flex; align-items:baseline; gap:24px;">
+            <p style="margin:0 auto; max-width:50ch; font-size:clamp(16px,1.6vw,20px); line-height:1.8; color:#4a524a; font-weight:400;">Process-driven execution, quality control at every stage and disciplined timelines — watch a Dunamis structure rise from foundation to finished skyline.</p>
+            <div style="margin-top:60px; display:flex; align-items:baseline; justify-content:center; gap:24px;">
               <div data-buildpct style="font-family:'Sora',sans-serif; font-weight:300; font-size:clamp(60px,7vw,110px); line-height:0.9; color:#b08a34; letter-spacing:-0.04em;">0%</div>
               <div data-buildlabel style="font-size:14px; font-weight:500; letter-spacing:.3em; text-transform:uppercase; color:#1a1c1a;">Foundation</div>
             </div>
           </div>
-          <div style="position:relative; height:70vh; min-height:460px; display:flex; align-items:flex-end; justify-content:center;">
+          <div data-build-img style="position:relative; height:70vh; min-height:460px; display:flex; align-items:flex-end; justify-content:center;">
             <div style="flex:1; display:flex; justify-content:center;">
             <div style="position:relative; width:100%; max-width:450px; height:70vh;">
               <!-- Shadow / Unfinished Building -->
