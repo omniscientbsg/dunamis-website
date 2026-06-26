@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#092626; }
+  body{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+  ::selection{ background:#c9a24b; color:#092626; }
+  @keyframes dunFloat{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
+  @keyframes dunCue{ 0%{ transform:translateY(0); opacity:.9; } 50%{ transform:translateY(9px); opacity:.35; } 100%{ transform:translateY(0); opacity:.9; } }
+  @keyframes dunMarquee{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+  @keyframes dunGlow{ 0%,100%{ opacity:.5; } 50%{ opacity:.85; } }
+</style>
+</helmet>
+
+<div id="dunamis-root" style="position:relative; width:100%; overflow-x:hidden; font-family:'Manrope',system-ui,sans-serif; color:#efe7d6; background:#092626;">
+
+  <!-- scroll progress -->
+  <div data-progress style="position:fixed; top:0; left:0; height:2px; width:100%; transform-origin:0 50%; transform:scaleX(0); background:linear-gradient(90deg,#c9a24b,#e7cf92); z-index:120;"></div>
+
+  <!-- NAV -->
+  <nav data-nav style="position:fixed; top:0; left:0; width:100%; z-index:110; display:flex; align-items:center; justify-content:space-between; padding:24px clamp(24px,5vw,80px); border-bottom:1px solid rgba(255,255,255,0); transition:background .5s ease, backdrop-filter .5s ease, border-color .5s ease, padding .5s ease;">
+    <div onClick="{{ goHome }}" style="display:flex; align-items:center; gap:16px; cursor:pointer;">
+      <div style="width:48px; height:48px; border-radius:50%; background:#c9a24b; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+        <img src="assets/dunamis-logo.png" alt="Dunamis Group" style="width:100%; height:100%; object-fit:cover;">
+      </div>
+      <div style="line-height:1.2;">
+        <div style="font-family:'Sora',sans-serif; font-weight:600; letter-spacing:.15em; font-size:15px; color:#f3ead7;">DUNAMIS</div>
+        <div style="font-size:10px; letter-spacing:.3em; color:#a39b88; font-weight:500;">GROUP</div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:clamp(24px,4vw,48px); font-size:13px; font-weight:500; letter-spacing:.08em; text-transform:uppercase;">
+      <div onClick="{{ goHome }}" style="cursor:pointer; position:relative; color:#e9e0cd;" style-hover="color:#c9a24b;">Home<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; left:0; right:0; bottom:-8px; height:2px; background:#c9a24b; border-radius:2px;"></span></sc-if></div>
+      <div onClick="{{ goProjects }}" style="cursor:pointer; position:relative; color:#e9e0cd;" style-hover="color:#c9a24b;">Projects<sc-if value="{{ isProjects }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; left:0; right:0; bottom:-8px; height:2px; background:#c9a24b; border-radius:2px;"></span></sc-if></div>
+      <div onClick="{{ goAbout }}" style="cursor:pointer; position:relative; color:#e9e0cd;" style-hover="color:#c9a24b;">About<sc-if value="{{ isAbout }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; left:0; right:0; bottom:-8px; height:2px; background:#c9a24b; border-radius:2px;"></span></sc-if></div>
+      <div onClick="{{ goContact }}" style="cursor:pointer; padding:12px 28px; border:1px solid rgba(201,162,75,.4); border-radius:100px; color:#e7cf92; letter-spacing:.1em; transition:all 0.3s ease;" style-hover="background:#c9a24b; color:#092626; border-color:#c9a24b; transform:scale(1.05);">Contact</div>
+    </div>
+  </nav>
+
+  <!-- ============ HOME ============ -->
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <div>
+
+    <!-- HERO (scroll to zoom image sequence) -->
+    <section data-hero-zoom style="position:relative; width:100%; height:100vh; overflow:hidden; background:#071f1f;">
+        
+        <!-- Canvas Image Sequence -->
+        <canvas id="hero-canvas" data-sequence-canvas="" data-desktop-src="https://cdn.overflow.nl/modus-sequence-v2/frame" data-mobile-src="https://cdn.overflow.nl/modus-sequence-v2/frame" data-filetype="jpg" data-frames="121" data-digits="3" data-index-start="0" data-static-src="https://cdn.overflow.nl/modus-sequence-v2/frame000.jpg" style="position:absolute; inset:0; width:100%; height:100%; z-index:1; object-fit:cover;"></canvas>
+
+        <!-- Top Gradient for Navbar Legibility -->
+        <div style="position:absolute; top:0; left:0; width:100%; height:200px; z-index:2; background:linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%); pointer-events:none;"></div>
+
+        <!-- content (fades out as you zoom in) -->
+        <div data-hero-content style="position:absolute; inset:0; z-index:3; display:flex; align-items:flex-end; padding:clamp(40px,8vw,140px); pointer-events:none;">
+          <div style="width:100%; max-width:1400px; margin:0 auto; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:40px;">
+            <h1 style="margin:0; font-family:'Sora',sans-serif; font-weight:700; font-size:clamp(50px,8vw,120px); line-height:0.95; letter-spacing:-.02em; color:#fff; text-shadow:0 10px 40px rgba(0,0,0,.6);">
+              Redefining<br><span style="color:#e7cf92;">Space</span>.
+            </h1>
+            <p style="margin:0; font-size:clamp(16px,1.6vw,22px); font-weight:400; color:#e9e0cd; max-width:40ch; line-height:1.6; text-shadow:0 4px 20px rgba(0,0,0,.8); text-align:right;">
+              Immersive architecture and bespoke real estate developments in Navi Mumbai.
+            </p>
+          </div>
+        </div>
+
+        <!-- scroll cue -->
+        <div data-cue style="position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:4; display:flex; flex-direction:column; align-items:center; gap:10px; color:#e7cf92; text-shadow:0 2px 10px rgba(0,0,0,.5);">
+          <span style="font-size:10px; letter-spacing:.34em; text-transform:uppercase;">Scroll</span>
+          <span style="animation:dunCue 1.8s ease-in-out infinite; font-size:18px;">↓</span>
+        </div>
+    </section>
+
+    <!-- NARRATIVE / word reveal -->
+    <section data-screen-label="Philosophy" style="position:relative; z-index:5; background:#f0ebd8; color:#1a1c1a; padding:clamp(140px,20vh,260px) clamp(24px,8vw,140px); border-top:1px solid rgba(0,0,0,.05);">
+      <div style="max-width:1400px; margin:0 auto; display:grid; grid-template-columns:1fr; gap:60px;">
+        <div>
+          <div style="font-size:12px; font-weight:600; letter-spacing:.3em; text-transform:uppercase; color:#b08a34; margin-bottom:40px; display:flex; align-items:center; gap:16px;">
+            <div style="width:40px; height:1px; background:#b08a34;"></div> The Dunamis Belief
+          </div>
+          <h2 data-words style="margin:0; font-family:'Sora',sans-serif; font-weight:400; font-size:clamp(40px,6.5vw,90px); line-height:1.05; letter-spacing:-.03em; color:#0b2f2f;">
+            <sc-for list="{{ words }}" as="word" hint-placeholder-count="13"><span data-w style="{{ word.st }}">{{ word.w }}</span></sc-for>
+          </h2>
+        </div>
+        <div style="display:flex; justify-content:flex-end;">
+          <p data-reveal="up" style="margin:0; max-width:50ch; font-size:clamp(16px,1.6vw,20px); line-height:1.7; color:#4a524a; font-weight:400;">Founded in Navi Mumbai on a simple, powerful belief — that every family deserves a quality home delivered with honesty, dignity and trust. We bring development, financing, procurement, execution and technology together under one integrated, process-driven vision.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section data-screen-label="Stats" style="position:relative; z-index:5; background:#071f1f; color:#efe7d6; padding:clamp(120px,16vh,180px) clamp(24px,8vw,140px);">
+      <div style="max-width:1400px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:clamp(40px,6vw,80px);">
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+          <div data-reveal="up" style="border-left:1px solid rgba(201,162,75,.3); padding-left:32px;">
+            <div style="font-family:'Sora',sans-serif; font-weight:300; font-size:clamp(60px,8vw,110px); line-height:0.9; color:#e7cf92; letter-spacing:-0.04em;"><span data-count="{{ s.n }}" data-suffix="{{ s.suf }}">0{{ s.suf }}</span></div>
+            <div style="margin-top:24px; font-size:13px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:#8e998e;">{{ s.label }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- HORIZONTAL VERTICALS -->
+    <section data-hwrap data-screen-label="Verticals" style="position:relative; z-index:5; background:#0b2f2f; overflow:hidden;">
+      <div style="position:relative; height:100vh; display:flex; flex-direction:column; justify-content:center;">
+        <div style="padding:0 clamp(24px,8vw,140px); margin-bottom:clamp(40px, 6vh, 80px); display:flex; align-items:flex-end; justify-content:space-between; z-index:2; width:100%;">
+          <div>
+            <div style="font-size:12px; font-weight:600; letter-spacing:.3em; text-transform:uppercase; color:#c9a24b; margin-bottom:16px;">What We Do</div>
+            <h2 style="margin:0; font-family:'Sora',sans-serif; font-weight:400; font-size:clamp(40px,5vw,70px); color:#f3ead7; letter-spacing:-.02em;">Six verticals, one vision.</h2>
+          </div>
+          <div style="width:clamp(100px,20vw,300px);">
+            <div style="height:1px; background:rgba(255,255,255,.1);"><div data-hprog style="height:100%; background:#c9a24b; transform-origin:0 50%; transform:scaleX(0);"></div></div>
+            <div style="margin-top:16px; font-size:11px; font-weight:500; letter-spacing:.25em; text-transform:uppercase; color:#7e8a86; text-align:right;">Drag · Scroll</div>
+          </div>
+        </div>
+        <div data-htrack style="display:flex; gap:clamp(40px,4vw,80px); padding:0 clamp(24px,8vw,140px); will-change:transform; width:fit-content;">
+          <sc-for list="{{ verticals }}" as="v" hint-placeholder-count="6">
+            <div style="flex:0 0 auto; width:clamp(340px,40vw,560px); height:60vh; min-height:420px; padding:clamp(40px,5vw,60px); border-radius:2px; background:rgba(7,31,31,.5); border:1px solid rgba(255,255,255,.03); display:flex; flex-direction:column; justify-content:space-between; transition:background 0.3s ease;" style-hover="background:rgba(7,31,31,.8);">
+              <div>
+                <div style="font-family:'Sora',sans-serif; font-weight:300; font-size:clamp(60px,7vw,100px); color:rgba(201,162,75,.4); line-height:1; letter-spacing:-0.04em;">{{ v.no }}</div>
+                <h3 style="margin:40px 0 20px; font-family:'Sora',sans-serif; font-weight:500; font-size:clamp(28px,3vw,42px); color:#f3ead7; letter-spacing:-.01em; line-height:1.2;">{{ v.t }}</h3>
+                <p style="margin:0; font-size:clamp(16px,1.6vw,19px); line-height:1.75; color:#a3aba3; max-width:40ch; font-weight:400;">{{ v.d }}</p>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCROLL-SCRUB BUILD -->
+    <section data-scrubwrap data-screen-label="Build" style="position:relative; z-index:5; background:#f0ebd8; color:#1a1c1a;">
+      <div style="position:relative; height:100vh; display:flex; align-items:center;">
+        <div style="position:relative; width:100%; max-width:1400px; margin:0 auto; padding:0 clamp(24px,8vw,140px); display:grid; grid-template-columns:1fr 1fr; gap:clamp(40px,8vw,120px); align-items:center;">
+          <div>
+            <div style="font-size:12px; font-weight:600; letter-spacing:.3em; text-transform:uppercase; color:#b08a34; margin-bottom:24px;">From Ground to Skyline</div>
+            <h2 style="margin:0 0 32px; font-family:'Sora',sans-serif; font-weight:400; font-size:clamp(40px,5vw,70px); line-height:1.05; letter-spacing:-.03em;">We build the way<br>we promise.</h2>
+            <p style="margin:0; max-width:50ch; font-size:clamp(16px,1.6vw,20px); line-height:1.8; color:#4a524a; font-weight:400;">Process-driven execution, quality control at every stage and disciplined timelines — watch a Dunamis structure rise from foundation to finished skyline.</p>
+            <div style="margin-top:60px; display:flex; align-items:baseline; gap:24px;">
+              <div data-buildpct style="font-family:'Sora',sans-serif; font-weight:300; font-size:clamp(60px,7vw,110px); line-height:0.9; color:#b08a34; letter-spacing:-0.04em;">0%</div>
+              <div data-buildlabel style="font-size:14px; font-weight:500; letter-spacing:.3em; text-transform:uppercase; color:#1a1c1a;">Foundation</div>
+            </div>
+          </div>
+          <div style="position:relative; height:70vh; min-height:460px; display:flex; align-items:flex-end; justify-content:center;">
+            <div style="flex:1; display:flex; justify-content:center;">
+            <div style="position:relative; width:100%; max-width:450px; height:70vh;">
+              <!-- Shadow / Unfinished Building -->
+              <img src="building_model_1782509990694.png" style="position:absolute; bottom:0; left:0; width:100%; height:100%; object-fit:contain; object-position:bottom; filter:grayscale(100%) opacity(15%);" alt="Building Blueprint">
+              <!-- Completed Building (Revealed on Scroll) -->
+              <div data-build style="position:absolute; bottom:0; left:0; width:100%; height:100%; clip-path:inset(100% 0 0 0);">
+                <img src="building_model_1782509990694.png" style="width:100%; height:100%; object-fit:contain; object-position:bottom;" alt="Completed Building">
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURED PROJECTS -->
+    <section data-screen-label="Featured" style="position:relative; z-index:5; background:#071f1f; padding:clamp(140px,18vh,220px) clamp(24px,8vw,140px);">
+      <div style="max-width:1400px; margin:0 auto;">
+        <div data-reveal="up" style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:32px; margin-bottom:80px; padding-bottom:60px; border-bottom:1px solid rgba(255,255,255,0.05);">
+          <div>
+            <div style="font-size:12px; font-weight:600; letter-spacing:.3em; text-transform:uppercase; color:#c9a24b; margin-bottom:24px;">Selected Work · Navi Mumbai</div>
+            <h2 style="margin:0; font-family:'Sora',sans-serif; font-weight:400; font-size:clamp(40px,5.5vw,76px); color:#f3ead7; letter-spacing:-.02em;">Places people are<br>proud to call home.</h2>
+          </div>
+          <div onClick="{{ goProjects }}" style="cursor:pointer; font-size:14px; font-weight:500; letter-spacing:.15em; text-transform:uppercase; color:#e7cf92; display:flex; align-items:center; gap:8px;" style-hover="color:#fff;">View all projects <span style="font-size:20px;">→</span></div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(380px,1fr)); gap:clamp(40px,4vw,60px);">
+          <sc-for list="{{ projects }}" as="p" hint-placeholder-count="4">
+            <div data-reveal="up" onClick="{{ goProjects }}" style="cursor:pointer; display:block;" style-hover="transform:translateY(-8px); transition:all 0.4s ease;">
+              <div style="position:relative; height:420px; background-color:#0b2f2f; display:flex; align-items:flex-end; padding:32px; overflow:hidden; background-image:url('{{ p.img }}'); background-size:cover; background-position:center;">
+                <div style="position:absolute; inset:0; opacity:0.1; background:linear-gradient(180deg, transparent 50%, #000 100%);"></div>
+                <div style="position:absolute; top:24px; right:24px; font-size:11px; font-weight:600; letter-spacing:.25em; text-transform:uppercase; color:#071f1f; background:#c9a24b; padding:8px 16px; z-index:2;">{{ p.status }}</div>
+              </div>
+              <div style="padding:32px 0;">
+                <div style="font-size:11px; font-weight:600; letter-spacing:.3em; text-transform:uppercase; color:#c9a24b; margin-bottom:16px;">{{ p.kind }}</div>
+                <h3 style="margin:0 0 12px; font-family:'Sora',sans-serif; font-weight:400; font-size:clamp(26px,3vw,34px); color:#f3ead7; letter-spacing:-.01em;">{{ p.t }}</h3>
+                <div style="font-size:15px; color:#8e998e; font-weight:400;">{{ p.loc }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+  </div>
+  </sc-if>
+
+  <!-- ============ PROJECTS ============ -->
+  <sc-if value="{{ isProjects }}" hint-placeholder-val="{{ true }}">
+  <div>
+    <section data-screen-label="ProjectsHero" style="position:relative; min-height:62vh; display:flex; align-items:flex-end; padding:0 clamp(20px,8vw,140px) clamp(60px,8vh,100px); background:radial-gradient(110% 80% at 70% 10%, #0e3a3a, #071f1f 70%); overflow:hidden;">
+      <div style="position:absolute; top:0; right:6vw; font-family:'Sora',sans-serif; font-weight:800; font-size:60vh; line-height:.7; color:#c9a24b; opacity:.05; pointer-events:none;">02</div>
+      <div style="position:relative; max-width:900px;">
+        <div style="font-size:11.5px; letter-spacing:.42em; text-transform:uppercase; color:#c9a24b; margin-bottom:24px; padding-top:140px;">Portfolio</div>
+        <h1 style="margin:0; font-family:'Sora',sans-serif; font-weight:700; font-size:clamp(40px,7vw,96px); line-height:1.02; letter-spacing:-.02em; color:#f5edda;">Built across Navi Mumbai.</h1>
+        <p style="margin:28px 0 0; max-width:54ch; font-size:clamp(15px,1.5vw,18px); line-height:1.75; color:#c0b69d;">Residential, commercial and society redevelopment — each project planned around real human needs and delivered with transparent, process-driven execution.</p>
+      </div>
+    </section>
+
+    <section style="background:#f5efe4; color:#1c1c1c; padding:clamp(80px,11vh,140px) clamp(20px,8vw,140px);">
+      <div style="max-width:1280px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:clamp(22px,2vw,38px);">
+        <sc-for list="{{ projects }}" as="p" hint-placeholder-count="6">
+          <div data-reveal="up" style="border-radius:16px; overflow:hidden; background:#fff; border:1px solid rgba(28,28,28,.08); box-shadow:0 10px 40px rgba(11,47,47,.06);" style-hover="box-shadow:0 24px 60px rgba(11,47,47,.14);">
+            <div style="position:relative; height:300px; background-color:#e9e0cd; background-image:repeating-linear-gradient(135deg, rgba(176,138,52,.1) 0, rgba(176,138,52,.1) 11px, transparent 11px, transparent 22px); display:flex; align-items:flex-end; padding:22px;">
+              <div style="position:absolute; top:18px; right:18px; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#fff; background:#0b2f2f; padding:6px 13px; border-radius:100px;">{{ p.status }}</div>
+              <div style="font-family:'Sora',monospace; font-size:11px; letter-spacing:.18em; color:rgba(176,138,52,.75); text-transform:uppercase;">[ project visual ]</div>
+            </div>
+            <div style="padding:26px 26px 30px;">
+              <div style="font-size:10.5px; letter-spacing:.24em; text-transform:uppercase; color:#b08a34; margin-bottom:12px;">{{ p.kind }}</div>
+              <h3 style="margin:0 0 8px; font-family:'Sora',sans-serif; font-weight:600; font-size:25px; color:#1c1c1c;">{{ p.t }}</h3>
+              <div style="font-size:13.5px; color:#7a7264;">{{ p.loc }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- redevelopment feature -->
+    <section style="background:#0b2f2f; color:#efe7d6; padding:clamp(100px,14vh,170px) clamp(20px,8vw,140px);">
+      <div style="max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:clamp(40px,6vw,90px); align-items:center;">
+        <div data-reveal="up">
+          <div style="font-size:11.5px; letter-spacing:.42em; text-transform:uppercase; color:#c9a24b; margin-bottom:24px;">Redevelopment</div>
+          <h2 style="margin:0 0 24px; font-family:'Sora',sans-serif; font-weight:600; font-size:clamp(28px,3.6vw,48px); line-height:1.1; color:#f3ead7;">Redevelopment, with respect.</h2>
+          <p style="margin:0 0 22px; font-size:16px; line-height:1.8; color:#b6ac93;">Redevelopment is never just construction. It involves families, senior citizens, community history and future aspirations — held in trust.</p>
+          <p style="margin:0; font-size:16px; line-height:1.8; color:#b6ac93;">Transparent communication, genuine member engagement and faster, professionally managed execution — that is the Dunamis way.</p>
+        </div>
+        <div data-reveal="up" data-delay="0.1" style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div style="padding:24px; border:1px solid rgba(201,162,75,.22); border-radius:14px; background:rgba(201,162,75,.05);">Transparent communication</div>
+          <div style="padding:24px; border:1px solid rgba(201,162,75,.22); border-radius:14px; background:rgba(201,162,75,.05);">Member-first planning</div>
+          <div style="padding:24px; border:1px solid rgba(201,162,75,.22); border-radius:14px; background:rgba(201,162,75,.05);">Improved lifestyles</div>
+          <div style="padding:24px; border:1px solid rgba(201,162,75,.22); border-radius:14px; background:rgba(201,162,75,.05);">Sustainable value</div>
+        </div>
+      </div>
+    </section>
+  </div>
+  </sc-if>
+
+  <!-- ============ ABOUT ============ -->
+  <sc-if value="{{ isAbout }}" hint-placeholder-val="{{ true }}">
+  <div>
+    <section data-screen-label="AboutHero" style="position:relative; min-height:64vh; display:flex; align-items:flex-end; padding:0 clamp(20px,8vw,140px) clamp(60px,8vh,100px); background:radial-gradient(110% 80% at 30% 10%, #0e3a3a, #071f1f 70%); overflow:hidden;">
+      <div style="position:absolute; bottom:0; left:0; width:100%; height:34vh; display:flex; align-items:flex-end; gap:1vw; padding:0 4vw; opacity:.5;">
+        <sc-for list="{{ skyline }}" as="bar" hint-placeholder-count="14"><div style="flex:1; height:{{ bar.h }}; border:1px solid rgba(201,162,75,.3); border-bottom:none;"></div></sc-for>
+      </div>
+      <div style="position:relative; max-width:920px;">
+        <div style="font-size:11.5px; letter-spacing:.42em; text-transform:uppercase; color:#c9a24b; margin-bottom:24px; padding-top:140px;">Who We Are</div>
+        <h1 style="margin:0; font-family:'Sora',sans-serif; font-weight:700; font-size:clamp(36px,6vw,86px); line-height:1.05; letter-spacing:-.02em; color:#f5edda;">A platform of trust, opportunity & peaceful living.</h1>
+      </div>
+    </section>
+
+    <!-- vision / mission -->
+    <section style="background:#f5efe4; color:#1c1c1c; padding:clamp(90px,12vh,160px) clamp(20px,8vw,140px);">
+      <div style="max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:clamp(36px,5vw,80px);">
+        <div data-reveal="up">
+          <div style="font-size:11.5px; letter-spacing:.42em; text-transform:uppercase; color:#b08a34; margin-bottom:22px;">Our Vision</div>
+          <p style="margin:0; font-family:'Sora',sans-serif; font-weight:500; font-size:clamp(22px,2.5vw,32px); line-height:1.3; letter-spacing:-.01em;">To become one of India's most trusted development groups — building future-ready communities and transparent real estate ecosystems.</p>
+        </div>
+        <div data-reveal="up" data-delay="0.1">
+          <div style="font-size:11.5px; letter-spacing:.42em; text-transform:uppercase; color:#b08a34; margin-bottom:22px;">Our Mission</div>
+          <p style="margin:0; font-family:'Sora',sans-serif; font-weight:500; font-size:clamp(22px,2.5vw,32px); line-height:1.3; letter-spacing:-.01em;">To empower urban India through honest development, timely execution and technology-driven transparency — building toward a stronger, future-ready nation.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- pillars -->
+    <section style="background:#071f1f; color:#efe7d6; padding:clamp(100px,14vh,170px) clamp(20px,8vw,140px);">
+      <div style="max-width:1280px; margin:0 auto;">
+        <div data-reveal="up" style="margin-bottom:64px;">
+          <div style="font-size:11.5px; letter-spacing:.42em; text-transform:uppercase; color:#c9a24b; margin-bottom:18px;">Five Foundational Pillars</div>
+          <h2 style="margin:0; font-family:'Sora',sans-serif; font-weight:600; font-size:clamp(30px,4.4vw,58px); color:#f3ead7; letter-spacing:-.015em;">What we stand on.</h2>
+        </div>
+        <div>
+          <sc-for list="{{ pillars }}" as="p" hint-placeholder-count="5">
+            <div data-reveal="up" style="display:grid; grid-template-columns:90px 1fr; gap:clamp(20px,4vw,70px); align-items:baseline; padding:34px 0; border-top:1px solid rgba(201,162,75,.2);">
+              <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:clamp(26px,3vw,40px); color:rgba(201,162,75,.55);">{{ p.no }}</div>
+              <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); gap:clamp(16px,3vw,50px); align-items:baseline;">
+                <h3 style="margin:0; font-family:'Sora',sans-serif; font-weight:600; font-size:clamp(24px,3vw,40px); color:#f3ead7;">{{ p.t }}</h3>
+                <p style="margin:0; font-size:16px; line-height:1.7; color:#b6ac93;">{{ p.d }}</p>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <!-- leadership -->
+    <section style="background:#f5efe4; color:#1c1c1c; padding:clamp(100px,14vh,170px) clamp(20px,8vw,140px);">
+      <div style="max-width:1280px; margin:0 auto;">
+        <div data-reveal="up" style="margin-bottom:60px;">
+          <div style="font-size:11.5px; letter-spacing:.42em; text-transform:uppercase; color:#b08a34; margin-bottom:18px;">Leadership</div>
+          <h2 style="margin:0; font-family:'Sora',sans-serif; font-weight:600; font-size:clamp(30px,4.4vw,58px); letter-spacing:-.015em;">Founder-led execution.</h2>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:clamp(24px,2.5vw,44px);">
+          <sc-for list="{{ leaders }}" as="l" hint-placeholder-count="3">
+            <div data-reveal="up" style="background:#fff; border:1px solid rgba(28,28,28,.07); border-radius:16px; overflow:hidden; box-shadow:0 10px 40px rgba(11,47,47,.05);">
+              <div style="height:300px; background-color:#e9e0cd; background-image:repeating-linear-gradient(135deg, rgba(176,138,52,.1) 0, rgba(176,138,52,.1) 11px, transparent 11px, transparent 22px); display:flex; align-items:flex-end; padding:20px;"><span style="font-family:'Sora',monospace; font-size:10.5px; letter-spacing:.18em; color:rgba(176,138,52,.75); text-transform:uppercase;">[ portrait ]</span></div>
+              <div style="padding:28px 26px 32px;">
+                <h3 style="margin:0 0 6px; font-family:'Sora',sans-serif; font-weight:600; font-size:23px;">{{ l.n }}</h3>
+                <div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#b08a34; margin-bottom:18px;">{{ l.r }}</div>
+                <p style="margin:0; font-size:14.5px; line-height:1.75; color:#5b5345;">{{ l.b }}</p>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <!-- ecosystem marquee -->
+    <section style="background:#0b2f2f; color:#efe7d6; padding:clamp(80px,11vh,130px) 0; overflow:hidden;">
+      <div style="text-align:center; margin-bottom:50px; padding:0 24px;">
+        <div style="font-size:11.5px; letter-spacing:.42em; text-transform:uppercase; color:#c9a24b; margin-bottom:16px;">Our Ecosystem</div>
+        <h2 style="margin:0; font-family:'Sora',sans-serif; font-weight:600; font-size:clamp(26px,3.6vw,46px); color:#f3ead7;">Building together.</h2>
+      </div>
+      <div style="display:flex; width:max-content; animation:dunMarquee 28s linear infinite; gap:0;">
+        <div style="display:flex; gap:0;">
+          <sc-for list="{{ partners }}" as="pt" hint-placeholder-count="9"><span style="font-family:'Sora',sans-serif; font-weight:500; font-size:clamp(28px,3.4vw,52px); color:rgba(231,207,146,.85); padding:0 .5em; letter-spacing:-.01em;">{{ pt }}<span style="color:#c9a24b; margin-left:.5em;">·</span></span></sc-for>
+        </div>
+        <div style="display:flex; gap:0;" aria-hidden="true">
+          <sc-for list="{{ partners }}" as="pt" hint-placeholder-count="9"><span style="font-family:'Sora',sans-serif; font-weight:500; font-size:clamp(28px,3.4vw,52px); color:rgba(231,207,146,.85); padding:0 .5em; letter-spacing:-.01em;">{{ pt }}<span style="color:#c9a24b; margin-left:.5em;">·</span></span></sc-for>
+        </div>
+      </div>
+    </section>
+  </div>
+  </sc-if>
+
+  <!-- ============ FOOTER ============ -->
+  <footer id="dunamis-footer" data-screen-label="Footer" style="position:relative; z-index:5; background:#041212; color:#efe7d6; padding:clamp(120px,16vh,200px) clamp(24px,8vw,140px) 40px; border-top:1px solid rgba(255,255,255,0.05);">
+    <div style="max-width:1400px; margin:0 auto;">
+      <div style="display:grid; grid-template-columns:1fr; gap:60px; padding-bottom:80px; border-bottom:1px solid rgba(255,255,255,0.1);">
+        <div>
+          <div style="font-size:12px; font-weight:600; letter-spacing:.3em; text-transform:uppercase; color:#c9a24b; margin-bottom:32px;">Building Trust · Creating Futures</div>
+          <h2 style="margin:0; font-family:'Sora',sans-serif; font-weight:300; font-size:clamp(50px,9vw,140px); line-height:1; letter-spacing:-.04em; color:#f5edda;">Let's build<br>together.</h2>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:clamp(40px,6vw,120px); align-items:flex-end;">
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div style="font-size:11px; font-weight:600; letter-spacing:.25em; text-transform:uppercase; color:#7e8a86;">Contact Us</div>
+            <a href="mailto:info@dunamisgroup.in" style="color:#e7cf92; text-decoration:none; font-size:clamp(20px,2vw,28px); font-weight:400;" style-hover="color:#fff;">info@dunamisgroup.in</a>
+            <a href="https://www.dunamisgroup.in" style="color:#e7cf92; text-decoration:none; font-size:clamp(20px,2vw,28px); font-weight:400;" style-hover="color:#fff;">www.dunamisgroup.in</a>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div style="font-size:11px; font-weight:600; letter-spacing:.25em; text-transform:uppercase; color:#7e8a86;">Follow Us</div>
+            <div style="display:flex; gap:24px; font-size:15px; font-weight:500; color:#e7cf92;">
+              <span style="cursor:pointer;" style-hover="color:#fff;">Instagram</span>
+              <span style="cursor:pointer;" style-hover="color:#fff;">LinkedIn</span>
+              <span style="cursor:pointer;" style-hover="color:#fff;">YouTube</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:24px; padding-top:40px;">
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div style="width:40px; height:40px; border-radius:50%; background:#c9a24b; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+            <img src="assets/dunamis-logo.png" alt="Dunamis Group" style="width:100%; height:100%; object-fit:cover;">
+          </div>
+          <span style="font-family:'Sora',sans-serif; font-weight:600; letter-spacing:.2em; font-size:14px; color:#f3ead7;">DUNAMIS GROUP</span>
+        </div>
+        <div style="font-size:12px; font-weight:500; letter-spacing:.15em; color:#7e8a86;">Mumbai &nbsp;·&nbsp; Navi Mumbai &nbsp;·&nbsp; India</div>
+        <div style="font-size:12px; font-weight:500; color:#5e6c68;">© 2026 Dunamis Group. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { page: 'home', menu: false };
+
+  // ---------- data ----------
+  get verticals() {
+    return [
+      { no: '01', t: 'Real Estate Development', d: 'Residential and commercial projects focused on quality, planning and long-term value creation.' },
+      { no: '02', t: 'Redevelopment', d: 'Society redevelopment with transparent communication, member-first planning and efficient execution.' },
+      { no: '03', t: 'Construction & Execution', d: 'Process-driven project management with quality control and disciplined delivery systems.' },
+      { no: '04', t: 'Procurement & Supply Chain', d: 'Strategic sourcing systems engineered to optimise cost, speed and quality at scale.' },
+      { no: '05', t: 'PropTech & FinTech', d: 'Technology-led systems for planning, transparency, approvals and financial discipline.' },
+      { no: '06', t: 'Strategic Partnerships', d: 'Collaborating with landowners, societies, investors, architects and ecosystem partners.' },
+    ];
+  }
+  get pillars() {
+    return [
+      { no: 'I', t: 'Integrity', d: 'We say what we mean and deliver what we promise.' },
+      { no: 'II', t: 'Transparency', d: 'Clear communication, ethical practices and process-oriented execution.' },
+      { no: 'III', t: 'Quality', d: 'Thoughtfully designed spaces built to carry lasting value.' },
+      { no: 'IV', t: 'Speed', d: 'Efficient planning and disciplined execution timelines.' },
+      { no: 'V', t: 'Human-Centric', d: 'Homes and communities built around real human needs.' },
+    ];
+  }
+  get projects() {
+    return [
+      { t: 'Dunamis Skyline', loc: 'Kharghar, Navi Mumbai', kind: 'Residential', status: 'Ongoing', tone: 'a', img: 'premium_project_1_1782507698086.png' },
+      { t: 'Dunamis Greens', loc: 'Panvel, Navi Mumbai', kind: 'Residential', status: 'Upcoming', tone: 'b', img: 'premium_project_2_1782507712877.png' },
+      { t: 'Dunamis Square', loc: 'Vashi, Navi Mumbai', kind: 'Commercial', status: 'Ongoing', tone: 'c', img: 'premium_project_3_1782507728897.png' },
+      { t: 'Heritage Renaissance', loc: 'Nerul, Navi Mumbai', kind: 'Redevelopment', status: 'In Planning', tone: 'b', img: 'premium_project_1_1782507698086.png' },
+      { t: 'Dunamis Heights', loc: 'Ulwe, Navi Mumbai', kind: 'Residential', status: 'Upcoming', tone: 'a', img: 'premium_project_3_1782507728897.png' },
+      { t: 'Dunamis Vista', loc: 'Taloja, Navi Mumbai', kind: 'Residential', status: 'In Planning', tone: 'c', img: 'premium_project_2_1782507712877.png' },
+    ];
+  }
+  get leaders() {
+    return [
+      { n: 'Nikhilesh Mishra', r: 'Founder · Strategy & Execution', b: 'A strategic entrepreneur and real estate developer with multidisciplinary experience across infrastructure, energy, procurement and urban development. He founded Dunamis on a belief in ethical entrepreneurship and nation building — to create a more transparent and trustworthy real estate ecosystem for India.' },
+      { n: 'Anupam Mukherjee', r: 'Co-Founder · Sales & Product Strategy', b: 'A seasoned real estate professional with over two decades of industry experience and sales leadership across leading brands. Known for deep market understanding, customer instincts and execution, he has driven large-scale residential sales across the MMR region.' },
+      { n: 'Sitender Sandhu', r: 'Approvals & Society Relations', b: 'Experienced in society coordination, approvals and stakeholder engagement with a calm, solution-oriented approach that keeps redevelopment journeys moving with trust.' },
+    ];
+  }
+  get partners() {
+    return ['Investors', 'Landowners', 'Financial Institutions', 'Architects', 'Consultants', 'Channel Partners', 'Contractors', 'Vendors', 'Societies'];
+  }
+  get stats() {
+    return [
+      { n: 5, suf: '', label: 'Foundational Pillars' },
+      { n: 6, suf: '', label: 'Core Verticals' },
+      { n: 3, suf: '', label: 'Key Markets · MMR' },
+      { n: 100, suf: '%', label: 'Transparent Execution' },
+    ];
+  }
+  get skyline() { return [34, 58, 44, 80, 50, 70, 40, 92, 52, 66, 46, 76, 38, 60]; }
+  get words() {
+    const raw = 'More than buildings — we create ecosystems of trust, opportunity and peaceful living.';
+    const hot = { 'ecosystems': 1, 'trust,': 1, 'opportunity': 1, 'peaceful': 1, 'living.': 1 };
+    return raw.split(' ').map(w => ({
+      w,
+      st: {
+        color: hot[w] ? '#b08a34' : '#1a1c1a',
+        opacity: 0.12, display: 'inline-block', marginRight: '0.3em',
+        willChange: 'opacity, transform, filter',
+      },
+    }));
+  }
+
+  // ---------- lifecycle ----------
+  componentDidMount() {
+    this._tick = false;
+    this._reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.initLenis(0);
+    this._onScroll = () => this.requestTick();
+    this._onResize = () => this.onScroll();
+    window.addEventListener('scroll', this._onScroll, { passive: true });
+    window.addEventListener('resize', this._onResize);
+    this.setupScroll();
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState && prevState.page !== this.state.page) {
+      // new content has committed to the DOM by now; reset to the top of the new page
+      const reset = () => {
+        if (this.lenis) {
+          this.lenis.stop();
+          this.lenis.resize();
+          window.scrollTo(0, 0);
+          this.lenis.scrollTo(0, { immediate: true, force: true });
+          this.lenis.start();
+        } else {
+          window.scrollTo(0, 0);
+        }
+        this.onScroll();
+      };
+      reset();
+      requestAnimationFrame(() => { reset(); this.setupScroll(); });
+      setTimeout(reset, 90);
+    }
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this._onScroll);
+    window.removeEventListener('resize', this._onResize);
+    if (this._io) this._io.disconnect();
+    if (this.lenis) this.lenis.destroy();
+    if (this._raf) cancelAnimationFrame(this._raf);
+  }
+
+  initLenis(tries) {
+    if (this._reduced) return;
+    if (window.Lenis && window.gsap && window.ScrollTrigger) {
+      gsap.registerPlugin(ScrollTrigger);
+      this.lenis = new window.Lenis({ duration: 1.15, smoothWheel: true, lerp: 0.09 });
+      this.lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => { this.lenis.raf(time * 1000); });
+      gsap.ticker.lagSmoothing(0);
+      
+      this.initHeroZoom();
+      
+      this.lenis.on('scroll', () => this.requestTick());
+    } else if (tries < 30) {
+      setTimeout(() => this.initLenis(tries + 1), 120);
+    }
+  }
+
+  initHeroZoom() {
+    const heroZoom = document.querySelector('[data-hero-zoom]');
+    const canvas = document.getElementById('hero-canvas');
+    if (!heroZoom || !canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    
+    // Resize canvas to match screen resolution cleanly
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      render();
+    };
+    window.addEventListener('resize', resizeCanvas);
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const frameCount = parseInt(canvas.dataset.frames) || 121;
+    const digits = parseInt(canvas.dataset.digits) || 3;
+    const baseUrl = canvas.dataset.desktopSrc;
+    const filetype = canvas.dataset.filetype || 'jpg';
+    
+    const currentFrame = index => (
+      `${baseUrl}${String(index).padStart(digits, '0')}.${filetype}`
+    );
+
+    const images = [];
+    const imageSeq = { frame: 0 };
+
+    for (let i = 0; i < frameCount; i++) {
+      const img = new Image();
+      img.src = currentFrame(i);
+      images.push(img);
+    }
+
+    function render() {
+      const img = images[imageSeq.frame];
+      if (!img || !img.complete) return;
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
+      const scale = Math.max(canvasWidth / img.width, canvasHeight / img.height);
+      const x = (canvasWidth - img.width * scale) / 2;
+      const y = (canvasHeight - img.height * scale) / 2;
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+      ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+    }
+    
+    if (images[0].complete) {
+      render();
+    } else {
+      images[0].onload = render;
+    }
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: heroZoom,
+        start: "top top",
+        end: "+=350%", // Pins for 350% of the viewport height
+        scrub: 1, // Smoothing added
+        pin: true,
+      }
+    });
+
+    // 1. Scrub through the image sequence frames
+    tl.to(imageSeq, {
+      frame: frameCount - 1,
+      snap: "frame",
+      ease: "none",
+      onUpdate: render
+    }, 0);
+
+    // 2. Fade out content and scroll cue as you scroll
+    tl.to('[data-hero-content]', { opacity: 0, scale: 0.9, y: -40, ease: 'power1.in' }, 0);
+    tl.to('[data-cue]', { opacity: 0 }, 0);
+    
+    // Initialize other GSAP ScrollTriggers here so they don't fight with manual JS
+    this.initGSAPScroll();
+  }
+
+  initGSAPScroll() {
+    const root = document.getElementById('dunamis-root');
+    
+    // Horizontal scroll section
+    const hs = root.querySelector('[data-hwrap]');
+    const track = root.querySelector('[data-htrack]');
+    if (hs && track) {
+      const scrollWidth = track.scrollWidth - window.innerWidth;
+      gsap.to(track, {
+        x: -scrollWidth,
+        ease: "none",
+        scrollTrigger: {
+          trigger: hs,
+          start: "top top",
+          end: `+=${scrollWidth + window.innerWidth}`,
+          scrub: true,
+          pin: true
+        }
+      });
+      // Progress bar for horizontal
+      const hprog = root.querySelector('[data-hprog]');
+      if (hprog) {
+        gsap.to(hprog, {
+          scaleX: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: hs,
+            start: "top top",
+            end: `+=${scrollWidth + window.innerWidth}`,
+            scrub: true
+          }
+        });
+      }
+    }
+
+    // Build Scrub Section
+    const sc = root.querySelector('[data-scrubwrap]');
+    const build = root.querySelector('[data-build]');
+    if (sc && build) {
+      const stages = ['Foundation', 'Structure', 'Facade', 'Skyline'];
+      const lbl = sc.querySelector('[data-buildlabel]');
+      const pct = sc.querySelector('[data-buildpct]');
+      
+      const bTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sc,
+          start: "top top",
+          end: "+=200%",
+          scrub: true,
+          pin: true,
+          onUpdate: (self) => {
+            const p = self.progress;
+            if (lbl) lbl.textContent = stages[Math.min(3, Math.floor(p * 3.999))];
+            if (pct) pct.textContent = Math.round(p * 100) + '%';
+          }
+        }
+      });
+      bTl.fromTo(build, { clipPath: 'inset(100% 0 0 0)' }, { clipPath: 'inset(0% 0 0 0)', ease: "none" });
+    }
+  }
+
+  requestTick() {
+    if (this._tick) return;
+    this._tick = true;
+    requestAnimationFrame(() => { this._tick = false; this.onScroll(); });
+  }
+
+  setupScroll() {
+    const root = document.getElementById('dunamis-root');
+    if (!root) return;
+    this._root = root;
+    if (this._io) this._io.disconnect();
+    this._io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        if (el.dataset.reveal === 'up') { el.style.opacity = '1'; el.style.transform = 'none'; }
+        if (el.dataset.count !== undefined) this.animateCount(el);
+        this._io.unobserve(el);
+      });
+    }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+    root.querySelectorAll('[data-reveal="up"]').forEach((el) => {
+      const d = parseFloat(el.dataset.delay || '0');
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(34px)';
+      el.style.transition = 'opacity 1s cubic-bezier(.16,1,.3,1) ' + d + 's, transform 1.05s cubic-bezier(.16,1,.3,1) ' + d + 's';
+      this._io.observe(el);
+    });
+    root.querySelectorAll('[data-count]').forEach((el) => this._io.observe(el));
+    this.onScroll();
+  }
+
+  animateCount(el) {
+    const target = parseFloat(el.dataset.count);
+    const suf = el.dataset.suffix || '';
+    const dur = 1500;
+    const start = performance.now();
+    const step = (t) => {
+      let p = Math.min(1, (t - start) / dur);
+      p = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * p) + suf;
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  onScroll() {
+    const root = this._root;
+    if (!root) return;
+    const vh = window.innerHeight;
+    const sy = window.scrollY || window.pageYOffset;
+    const clamp = (v) => Math.max(0, Math.min(1, v));
+
+    const docMax = document.documentElement.scrollHeight - vh;
+    const bar = root.querySelector('[data-progress]');
+    if (bar) bar.style.transform = 'scaleX(' + (docMax > 0 ? sy / docMax : 0) + ')';
+
+    const nav = root.querySelector('[data-nav]');
+    if (nav) {
+      const on = sy > 64;
+      nav.style.background = on ? 'rgba(7,31,31,0.85)' : 'rgba(7,31,31,0)';
+      nav.style.backdropFilter = on ? 'blur(24px)' : 'blur(0px)';
+      nav.style.borderBottomColor = on ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0)';
+      nav.style.padding = on ? '16px clamp(24px,5vw,80px)' : '24px clamp(24px,5vw,80px)';
+    }
+
+    const heroZoom = root.querySelector('[data-hero-zoom]');
+    if (heroZoom) {
+      // Logic moved to GSAP in initHeroZoom
+    }
+
+    const wr = root.querySelector('[data-words]');
+    if (wr) {
+      const r = wr.getBoundingClientRect();
+      const s = vh * 0.82, e = vh * 0.3;
+      const p = clamp((s - r.top) / (s - e));
+      const spans = wr.querySelectorAll('span[data-w]');
+      const n = spans.length;
+      spans.forEach((sp, i) => {
+        const wp = clamp(p * n - i);
+        sp.style.opacity = (0.1 + 0.9 * wp);
+        sp.style.filter = 'blur(' + ((1 - wp) * 7) + 'px)';
+        sp.style.transform = 'translateY(' + ((1 - wp) * 14) + 'px)';
+      });
+    }
+  }
+
+  // ---------- render ----------
+  go(page) {
+    this.setState({ page, menu: false });
+  }
+  contact() {
+    this.setState({ menu: false });
+    const f = document.getElementById('dunamis-footer');
+    if (this.lenis && f) this.lenis.scrollTo(f, { offset: 0 });
+    else if (f) f.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  renderVals() {
+    const page = this.state.page;
+    return {
+      page,
+      menu: this.state.menu,
+      isHome: page === 'home',
+      isProjects: page === 'projects',
+      isAbout: page === 'about',
+      toggleMenu: () => this.setState((s) => ({ menu: !s.menu })),
+      goHome: () => this.go('home'),
+      goProjects: () => this.go('projects'),
+      goAbout: () => this.go('about'),
+      goContact: () => this.contact(),
+      verticals: this.verticals,
+      pillars: this.pillars,
+      projects: this.projects,
+      leaders: this.leaders,
+      partners: this.partners,
+      stats: this.stats,
+      skyline: this.skyline.map((h) => ({ h: h + '%' })),
+      words: this.words,
+    };
+  }
+}
+</script>
+</body>
+</html>
