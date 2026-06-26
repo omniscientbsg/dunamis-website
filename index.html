@@ -185,17 +185,11 @@
               <div data-buildlabel style="font-size:14px; font-weight:500; letter-spacing:.3em; text-transform:uppercase; color:#1a1c1a;">Foundation</div>
             </div>
           </div>
-          <div data-build-img style="position:relative; height:70vh; min-height:460px; display:flex; align-items:flex-end; justify-content:center;">
-            <div style="flex:1; display:flex; justify-content:center;">
-            <div style="position:relative; width:100%; max-width:450px; height:70vh;">
-              <!-- Shadow / Unfinished Building -->
-              <img src="building_model_1782509990694.png" style="position:absolute; bottom:0; left:0; width:100%; height:100%; object-fit:contain; object-position:bottom; filter:grayscale(100%) opacity(15%);" alt="Building Blueprint">
-              <!-- Completed Building (Revealed on Scroll) -->
-              <div data-build style="position:absolute; bottom:0; left:0; width:100%; height:100%; clip-path:inset(100% 0 0 0);">
-                <img src="building_model_1782509990694.png" style="width:100%; height:100%; object-fit:contain; object-position:bottom;" alt="Completed Building">
-              </div>
-            </div>
-          </div>
+          <div data-build-img style="position:relative; height:70vh; min-height:460px; display:flex; align-items:flex-end; justify-content:center; width:100%; max-width:450px; margin:0 auto;">
+            <!-- Shadow / Unfinished Building -->
+            <img src="building_model_1782509990694.png" style="max-width:100%; max-height:100%; width:auto; height:auto; display:block; filter:grayscale(100%) opacity(15%);" alt="Building Blueprint">
+            <!-- Completed Building (Revealed on Scroll) -->
+            <img data-build src="building_model_1782509990694.png" style="position:absolute; bottom:0; left:50%; transform:translateX(-50%); max-width:100%; max-height:100%; width:auto; height:auto; display:block; clip-path:inset(100% 0 0 0);" alt="Completed Building">
           </div>
         </div>
       </div>
