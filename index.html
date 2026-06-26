@@ -23,6 +23,14 @@
   @keyframes dunCue{ 0%{ transform:translateY(0); opacity:.9; } 50%{ transform:translateY(9px); opacity:.35; } 100%{ transform:translateY(0); opacity:.9; } }
   @keyframes dunMarquee{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
   @keyframes dunGlow{ 0%,100%{ opacity:.5; } 50%{ opacity:.85; } }
+  @media (max-width: 768px) {
+    .desktop-nav { display: none !important; }
+    .mobile-menu-btn { display: flex !important; }
+  }
+  @media (min-width: 769px) {
+    .mobile-menu-btn { display: none !important; }
+    .mobile-menu-overlay { display: none !important; }
+  }
 </style>
 </helmet>
 
@@ -42,13 +50,27 @@
         <div style="font-size:10px; letter-spacing:.3em; color:#a39b88; font-weight:500;">GROUP</div>
       </div>
     </div>
-    <div style="display:flex; align-items:center; gap:clamp(24px,4vw,48px); font-size:13px; font-weight:500; letter-spacing:.08em; text-transform:uppercase;">
+    <div class="desktop-nav" style="display:flex; align-items:center; gap:clamp(24px,4vw,48px); font-size:13px; font-weight:500; letter-spacing:.08em; text-transform:uppercase;">
       <div onClick="{{ goHome }}" style="cursor:pointer; position:relative; color:#e9e0cd;" style-hover="color:#c9a24b;">Home<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; left:0; right:0; bottom:-8px; height:2px; background:#c9a24b; border-radius:2px;"></span></sc-if></div>
       <div onClick="{{ goProjects }}" style="cursor:pointer; position:relative; color:#e9e0cd;" style-hover="color:#c9a24b;">Projects<sc-if value="{{ isProjects }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; left:0; right:0; bottom:-8px; height:2px; background:#c9a24b; border-radius:2px;"></span></sc-if></div>
       <div onClick="{{ goAbout }}" style="cursor:pointer; position:relative; color:#e9e0cd;" style-hover="color:#c9a24b;">About<sc-if value="{{ isAbout }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; left:0; right:0; bottom:-8px; height:2px; background:#c9a24b; border-radius:2px;"></span></sc-if></div>
       <div onClick="{{ goContact }}" style="cursor:pointer; padding:12px 28px; border:1px solid rgba(201,162,75,.4); border-radius:100px; color:#e7cf92; letter-spacing:.1em; transition:all 0.3s ease;" style-hover="background:#c9a24b; color:#092626; border-color:#c9a24b; transform:scale(1.05);">Contact</div>
     </div>
+    
+    <!-- Mobile Hamburger -->
+    <div class="mobile-menu-btn" onClick="{{ toggleMenu }}" style="cursor:pointer; flex-direction:column; gap:6px; z-index:200;">
+      <div style="width:28px; height:2px; background:#c9a24b; transition:all 0.3s ease; transform: {{ menu ? 'translateY(8px) rotate(45deg)' : 'none' }};"></div>
+      <div style="width:28px; height:2px; background:#c9a24b; transition:all 0.3s ease; transform: {{ menu ? 'translateY(-8px) rotate(-45deg)' : 'none' }};"></div>
+    </div>
   </nav>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" style="position:fixed; inset:0; background:rgba(7,31,31,0.98); backdrop-filter:blur(20px); z-index:150; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:40px; font-family:'Sora',sans-serif; font-size:clamp(28px, 6vw, 42px); font-weight:500; letter-spacing:.1em; text-transform:uppercase; transition:all 0.4s ease; opacity: {{ menu ? '1' : '0' }}; pointer-events: {{ menu ? 'auto' : 'none' }};">
+    <div onClick="{{ goHome }}" style="color:#e9e0cd; cursor:pointer;" style-hover="color:#c9a24b;">Home</div>
+    <div onClick="{{ goProjects }}" style="color:#e9e0cd; cursor:pointer;" style-hover="color:#c9a24b;">Projects</div>
+    <div onClick="{{ goAbout }}" style="color:#e9e0cd; cursor:pointer;" style-hover="color:#c9a24b;">About</div>
+    <div onClick="{{ goContact }}" style="color:#c9a24b; cursor:pointer;">Contact</div>
+  </div>
 
   <!-- ============ HOME ============ -->
   <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
